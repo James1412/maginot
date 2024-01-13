@@ -1,4 +1,5 @@
 import 'package:flex_color_picker/flex_color_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -44,52 +45,68 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Column(
-        children: [
-          ListTile(
-            onTap: () => onColorChangeTap('incomplete'),
-            title: const Text("Change due date color"),
-            trailing: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 25,
-              height: 25,
-              decoration: BoxDecoration(
-                color: inCompleteColor,
-                borderRadius: BorderRadius.circular(6),
-              ),
+      body: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              children: [
+                ListTile(
+                  onTap: () => onColorChangeTap('incomplete'),
+                  title: const Text("Change due date color"),
+                  trailing: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: 25,
+                    height: 25,
+                    decoration: BoxDecoration(
+                      color: inCompleteColor,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                ),
+                ListTile(
+                  onTap: () => onColorChangeTap('complete'),
+                  title: const Text("Change finished task color"),
+                  trailing: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: 25,
+                    height: 25,
+                    decoration: BoxDecoration(
+                      color: completedColor,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                ),
+                ListTile(
+                  onTap: () => onColorChangeTap('finishedDay'),
+                  title: const Text("Change finished day color"),
+                  trailing: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: 25,
+                    height: 25,
+                    decoration: BoxDecoration(
+                      color: finishedDayColor,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                ),
+                ListTile(
+                  onTap: changeToDefaultColors,
+                  title: const Text("Change to default colors"),
+                ),
+              ],
             ),
-          ),
-          ListTile(
-            onTap: () => onColorChangeTap('complete'),
-            title: const Text("Change finished task color"),
-            trailing: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 25,
-              height: 25,
-              decoration: BoxDecoration(
-                color: completedColor,
-                borderRadius: BorderRadius.circular(6),
-              ),
+            const Column(
+              children: [
+                AboutListTile(
+                  applicationName: "Maginot",
+                  child: Text("About"),
+                ),
+              ],
             ),
-          ),
-          ListTile(
-            onTap: () => onColorChangeTap('finishedDay'),
-            title: const Text("Change finished day color"),
-            trailing: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 25,
-              height: 25,
-              decoration: BoxDecoration(
-                color: finishedDayColor,
-                borderRadius: BorderRadius.circular(6),
-              ),
-            ),
-          ),
-          ListTile(
-            onTap: changeToDefaultColors,
-            title: const Text("Change to default colors"),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

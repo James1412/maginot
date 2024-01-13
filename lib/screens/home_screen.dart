@@ -1,8 +1,6 @@
-import 'package:flex_color_picker/flex_color_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:maginot/components/heat_map.dart';
+import 'package:maginot/components/yearly_calendar_heat_map.dart';
 import 'package:maginot/screens/settings.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -30,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
+          title: const Text("M A G I N O T"),
           actions: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -42,9 +41,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         body: ListView(
           children: [
-            const SizedBox(
-              height: 100,
-            ),
             const HeatMapWidget(),
             ListTile(
               title: const Text("Finish Homework"),

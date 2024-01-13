@@ -131,8 +131,10 @@ class _HeatMap extends State<HeatMap> {
     return widget.scrollable
         ? Scrollbar(
             controller: widget.controller,
+            trackVisibility: true,
+            thickness: 5.0,
             child: SizedBox(
-              height: widget.size! * 10,
+              height: widget.size! * 8.8,
               child: SingleChildScrollView(
                 controller: widget.controller,
                 scrollDirection: Axis.horizontal,
