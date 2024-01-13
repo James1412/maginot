@@ -16,14 +16,9 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
     initialScrollOffset:
         (DateTime.now().difference(DateTime(2024, 1, 1)).inDays / 7) /
             52 *
-            1932,
+            2557,
   );
   final deadline = DateTime(DateTime.now().year, 1, 20);
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +30,11 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
       colorMode: ColorMode.color,
       datasets: {
         deadline: 2,
+
+        // Check a few previous December days as they are not colored
+        for (var i = 0; i < 7; i++)
+          DateTime(currentYear - 1, 12, 25).add(Duration(days: i)): 1,
+
         for (var i = 0;
             i < DateTime.now().difference(DateTime(currentYear, 1, 1)).inDays;
             i++)
@@ -44,7 +44,7 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
         1: Colors.green.shade400,
         2: Colors.red.shade400,
       },
-      size: 40,
+      size: 45,
       showColorTip: false,
       onClick: (value) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();

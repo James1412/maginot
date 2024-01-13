@@ -12,7 +12,18 @@ class MaginotApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.grey.shade300,
+          shadowColor: Colors.grey.shade300,
+          surfaceTintColor: Colors.grey.shade300,
+        ),
         scaffoldBackgroundColor: Colors.grey.shade300,
+        dialogBackgroundColor: Colors.grey.shade100,
+        dialogTheme: DialogTheme(
+          backgroundColor: Colors.grey.shade100,
+          surfaceTintColor: Colors.white,
+          shadowColor: Colors.white,
+        ),
       ),
       home: const HomeScreen(),
     );
