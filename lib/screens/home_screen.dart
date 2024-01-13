@@ -11,8 +11,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(child: HeatMapWidget()),
+    return GestureDetector(
+      onTap: () {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      },
+      child: const Scaffold(
+        body: Center(child: HeatMapWidget()),
+      ),
     );
   }
 }

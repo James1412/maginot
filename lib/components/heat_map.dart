@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
+
+import '../heat_map/data/heatmap_color_mode.dart';
+import '../heat_map/heatmap.dart';
 
 class HeatMapWidget extends StatefulWidget {
   const HeatMapWidget({super.key});
@@ -9,37 +11,51 @@ class HeatMapWidget extends StatefulWidget {
 }
 
 class _HeatMapWidgetState extends State<HeatMapWidget> {
-  Map<DateTime, int> datasets = {
-    DateTime(2024, 1, 13): 1,
-    DateTime(2024, 1, 12): 9,
-    DateTime(2024, 1, 10): 4,
-    DateTime(2024, 1, 9): 2,
-    DateTime(2024, 1, 15): 13,
-  };
+  final int currentYear = DateTime.now().year;
+  final ScrollController _controller = ScrollController(
+    initialScrollOffset:
+        (DateTime.now().difference(DateTime(2024, 1, 1)).inDays / 7) /
+            52 *
+            1932,
+  );
+  final deadline = DateTime(DateTime.now().year, 1, 20);
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return HeatMap(
-      datasets: datasets,
-      startDate: DateTime.now(),
-      endDate: DateTime.now().add(const Duration(days: 10)),
-      colorsets: {
-        1: Colors.green.shade100,
-        3: Colors.green.shade200,
-        5: Colors.green.shade300,
-        7: Colors.green.shade400,
-        9: Colors.green.shade500,
-        11: Colors.green.shade600,
-        13: Colors.green.shade700,
-        15: Colors.green.shade800,
-        17: Colors.green.shade900,
+      controller: _controller,
+      startDate: DateTime(currentYear, 1, 1).add(const Duration(days: 1)),
+      endDate: DateTime(currentYear, 12, 31),
+      scrollable: true,
+      colorMode: ColorMode.color,
+      datasets: {
+        deadline: 2,
+        for (var i = 0;
+            i < DateTime.now().difference(DateTime(currentYear, 1, 1)).inDays;
+            i++)
+          DateTime(currentYear, 1, 1).add(Duration(days: i)): 1,
       },
-      onClick: (value) {
-        int currentValue = datasets[value] ?? 0;
-        datasets[value] = currentValue + 1;
-        setState(() {});
+      colorsets: {
+        1: Colors.green.shade400,
+        2: Colors.red.shade400,
       },
       size: 40,
+      showColorTip: false,
+      onClick: (value) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              value.toString().split(" ")[0],
+            ),
+          ),
+        );
+      },
     );
   }
 }
