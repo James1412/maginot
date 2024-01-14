@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:maginot/view_models/color_config_vm.dart';
+import 'package:maginot/view_models/is_vertical_vm.dart';
 import 'package:provider/provider.dart';
 
 import '../heat_map/data/heatmap_color_mode.dart';
 import '../heat_map/heatmap.dart';
 
 class HeatMapWidget extends StatefulWidget {
-  final List<List<dynamic>> deadline;
-  const HeatMapWidget({super.key, required this.deadline});
+  final List<List<dynamic>> deadlines;
+  const HeatMapWidget({super.key, required this.deadlines});
 
   @override
   State<HeatMapWidget> createState() => _HeatMapWidgetState();
@@ -29,28 +30,20 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
           2641);
 
   @override
-  void initState() {
-    _controller.addListener(() {
-      print(_controller.offset);
-    });
-    super.initState();
-  }
-
-  @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
 
-  List deadlineOnDate = [];
+  List deadlinesOnDate = [];
 
   @override
   Widget build(BuildContext context) {
     Map<DateTime, bool> resultMap = {};
     var highestDate = DateTime(currentYear, currentMonth, currentDay);
-    if (widget.deadline.isNotEmpty) {
+    if (widget.deadlines.isNotEmpty) {
       // Handle Multiple Events On The Same Date
-      for (var data in widget.deadline) {
+      for (var data in widget.deadlines) {
         DateTime date = data[0];
         bool hasFalseValue =
             resultMap.containsKey(date) ? resultMap[date]! : false;
@@ -69,8 +62,11 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      padding: !context.watch<IsVerticalViewModel>().isVertical
+          ? const EdgeInsets.symmetric(horizontal: 10.0)
+          : const EdgeInsets.only(right: 10.0),
       child: HeatMap(
+        isVertical: context.watch<IsVerticalViewModel>().isVertical,
         controller: _controller,
         startDate: DateTime(currentYear, 1, 1),
         endDate:
@@ -101,7 +97,7 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
                     .day): 1,
 
           // Add datasets from the input
-          for (List deadline in widget.deadline)
+          for (List deadline in widget.deadlines)
             deadline[0].add(const Duration(days: 0)):
                 resultMap[deadline[0]] == false ? 3 : 2,
         },
@@ -110,14 +106,14 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
           2: Color(context.watch<ColorsConfigViewModel>().incompleteColor),
           3: Color(context.watch<ColorsConfigViewModel>().completeColor),
         },
-        size: 53,
+        size: 47,
         showColorTip: false,
         onClick: (value) {
-          deadlineOnDate.clear();
-          for (List list in widget.deadline) {
+          deadlinesOnDate.clear();
+          for (List list in widget.deadlines) {
             if (list[0] == value) {
-              if (!deadlineOnDate.contains(list)) {
-                deadlineOnDate.add(list[2]);
+              if (!deadlinesOnDate.contains(list)) {
+                deadlinesOnDate.add(list[2]);
                 setState(() {});
               }
             }
@@ -157,7 +153,7 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
                 fontSize: 17,
               ),
             ),
-            if (deadlineOnDate.isNotEmpty)
+            if (deadlinesOnDate.isNotEmpty)
               const Text(
                 "Tasks",
                 style: TextStyle(
@@ -165,7 +161,7 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
                   fontSize: 15,
                 ),
               ),
-            for (String item in deadlineOnDate)
+            for (String item in deadlinesOnDate)
               Text(
                 item,
                 style: const TextStyle(

@@ -4,6 +4,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:maginot/components/maginot_dialog.dart';
 import 'package:maginot/components/yearly_calendar_heat_map.dart';
 import 'package:maginot/screens/settings.dart';
+import 'package:maginot/view_models/is_vertical_vm.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _controller = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   List<List> deadlines = [
     [
       DateTime(
@@ -52,6 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _controller.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -74,6 +78,8 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
+          elevation: 0,
+          scrolledUnderElevation: 0,
           title: const Text("M A G I N O T"),
           actions: [
             Padding(
@@ -85,53 +91,91 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        body: ListView(
+        body: Column(
           children: [
-            HeatMapWidget(
-              deadline: deadlines,
-            ),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: deadlines.length,
-              itemBuilder: (context, index) => InkWell(
-                splashFactory: InkRipple.splashFactory,
-                onTap: () => onListTileTap(index),
-                child: Slidable(
-                  key: const ValueKey(0),
-                  endActionPane: ActionPane(
-                    motion: const DrawerMotion(),
-                    dismissible: DismissiblePane(onDismissed: () {
-                      setState(() {
-                        deadlines.removeAt(index);
-                      });
-                    }),
-                    children: [
-                      SlidableAction(
-                        borderRadius: BorderRadius.circular(5),
-                        backgroundColor: Colors.red,
-                        onPressed: (context) {
-                          setState(() {
-                            deadlines.removeAt(index);
-                          });
-                        },
-                        icon: Icons.delete,
+            Stack(
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: context.watch<IsVerticalViewModel>().isVertical
+                      ? 580
+                      : 450,
+                  color: Colors.grey.shade300,
+                  child: const Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 15.0),
+                      child: Text(
+                        "Tasks",
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                    ],
-                  ),
-                  child: ListTile(
-                    shape: Border(
-                        bottom: BorderSide(
-                            color: Colors.grey.shade400, width: 0.4)),
-                    title: Text(deadlines[index][2]),
-                    subtitle:
-                        Text(deadlines[index][0].toString().split(" ")[0]),
-                    leading: Checkbox(
-                      activeColor: Colors.green,
-                      onChanged: (value) => onListTileTap(index),
-                      value: deadlines[index][3],
                     ),
-                    trailing: const Icon(Icons.chevron_left),
+                  ),
+                ),
+                SizedBox(
+                  height: context.watch<IsVerticalViewModel>().isVertical
+                      ? 550
+                      : null,
+                  child: context.watch<IsVerticalViewModel>().isVertical
+                      ? Scrollbar(
+                          thickness: 5,
+                          controller: _scrollController,
+                          child: SingleChildScrollView(
+                            controller: _scrollController,
+                            child: HeatMapWidget(
+                              deadlines: deadlines,
+                            ),
+                          ),
+                        )
+                      : HeatMapWidget(
+                          deadlines: deadlines,
+                        ),
+                ),
+              ],
+            ),
+            Expanded(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: deadlines.length,
+                itemBuilder: (context, index) => InkWell(
+                  splashFactory: InkRipple.splashFactory,
+                  onTap: () => onListTileTap(index),
+                  child: Slidable(
+                    key: const ValueKey(0),
+                    endActionPane: ActionPane(
+                      motion: const DrawerMotion(),
+                      dismissible: DismissiblePane(onDismissed: () {
+                        setState(() {
+                          deadlines.removeAt(index);
+                        });
+                      }),
+                      children: [
+                        SlidableAction(
+                          borderRadius: BorderRadius.circular(5),
+                          backgroundColor: Colors.red,
+                          onPressed: (context) {
+                            setState(() {
+                              deadlines.removeAt(index);
+                            });
+                          },
+                          icon: Icons.delete,
+                        ),
+                      ],
+                    ),
+                    child: ListTile(
+                      shape: Border(
+                          bottom: BorderSide(
+                              color: Colors.grey.shade400, width: 0.4)),
+                      title: Text(deadlines[index][2]),
+                      subtitle:
+                          Text(deadlines[index][0].toString().split(" ")[0]),
+                      leading: Checkbox(
+                        activeColor: Colors.green,
+                        onChanged: (value) => onListTileTap(index),
+                        value: deadlines[index][3],
+                      ),
+                      trailing: const Icon(Icons.chevron_left),
+                    ),
                   ),
                 ),
               ),

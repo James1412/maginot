@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import '../util/date_util.dart';
 
@@ -19,21 +21,24 @@ class HeatMapMonthText extends StatelessWidget {
   /// The margin value for correctly space between labels.
   final EdgeInsets? margin;
 
+  final bool isVertical;
+
   const HeatMapMonthText({
-    Key? key,
+    super.key,
     this.firstDayInfos,
     this.fontSize,
     this.fontColor,
     this.size,
     this.margin,
-  }) : super(key: key);
+    required this.isVertical,
+  });
 
   /// The list of every month labels and fitted space.
   List<Widget> _labels() {
     List<Widget> items = [];
 
     // Set true if previous week was the first day of the month.
-    bool _write = false;
+    bool write = false;
 
     // Loop until check every given weeks.
     for (int label = 0; label < (firstDayInfos?.length ?? 0); label++) {
@@ -41,12 +46,14 @@ class HeatMapMonthText extends StatelessWidget {
       // first week of month, create labels
       if (label == 0 ||
           (label > 0 && firstDayInfos![label] != firstDayInfos![label - 1])) {
-        _write = true;
+        write = true;
 
         // Add Text without width margin if first week is end of the month.
         // Otherwise, add Text with width margin.
         items.add(
-          firstDayInfos!.length == 1 || (label == 0 && firstDayInfos![label] != firstDayInfos![label + 1])
+          firstDayInfos!.length == 1 ||
+                  (label == 0 &&
+                      firstDayInfos![label] != firstDayInfos![label + 1])
               ? _renderText(DateUtil.SHORT_MONTH_LABEL[firstDayInfos![label]])
               : Container(
                   width: (((size ?? 20) + (margin?.right ?? 2)) * 2),
@@ -56,10 +63,10 @@ class HeatMapMonthText extends StatelessWidget {
                       DateUtil.SHORT_MONTH_LABEL[firstDayInfos![label]]),
                 ),
         );
-      } else if (_write) {
+      } else if (write) {
         // If given week is the next week of labeled week.
         // do nothing.
-        _write = false;
+        write = false;
       } else {
         // Else create empty box.
         items.add(Container(
@@ -74,12 +81,30 @@ class HeatMapMonthText extends StatelessWidget {
   }
 
   Widget _renderText(String text) {
-    return Text(
-      text,
-      style: TextStyle(
-        color: fontColor,
-        fontSize: fontSize,
-      ),
+    return Container(
+      margin: isVertical ? const EdgeInsets.symmetric(horizontal: 15) : null,
+      child: isVertical
+          ? RotatedBox(
+              quarterTurns: isVertical ? 1 : 0,
+              child: Transform(
+                transform: Matrix4.rotationX(pi),
+                alignment: Alignment.center,
+                child: Text(
+                  text,
+                  style: TextStyle(
+                    color: fontColor,
+                    fontSize: fontSize,
+                  ),
+                ),
+              ),
+            )
+          : Text(
+              text,
+              style: TextStyle(
+                color: fontColor,
+                fontSize: fontSize,
+              ),
+            ),
     );
   }
 

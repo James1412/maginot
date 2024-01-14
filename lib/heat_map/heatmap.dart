@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import './widget/heatmap_page.dart';
 import './widget/heatmap_color_tip.dart';
@@ -87,6 +89,7 @@ class HeatMap extends StatefulWidget {
   /// The double value of [HeatMapColorTip]'s tip container's size.
   final double? colorTipSize;
   final ScrollController controller;
+  final bool isVertical;
 
   const HeatMap({
     super.key,
@@ -109,6 +112,7 @@ class HeatMap extends StatefulWidget {
     this.colorTipHelper,
     this.colorTipCount,
     this.colorTipSize,
+    required this.isVertical,
   });
 
   @override
@@ -123,19 +127,40 @@ class _HeatMap extends State<HeatMap> {
 
   Widget _scrollableHeatMap(Widget child) {
     return widget.scrollable
-        ? Scrollbar(
-            controller: widget.controller,
-            trackVisibility: true,
-            thickness: 5.0,
-            child: SizedBox(
-              height: widget.size! * 8.8,
-              child: SingleChildScrollView(
+        ? widget.isVertical
+            ? RotatedBox(
+                quarterTurns: widget.isVertical ? 1 : 0,
+                child: Transform(
+                  transform: Matrix4.rotationX(pi),
+                  alignment: Alignment.center,
+                  child: Scrollbar(
+                    controller: widget.controller,
+                    trackVisibility: true,
+                    thickness: 5.0,
+                    child: SizedBox(
+                      height: widget.size! * 8.8,
+                      child: SingleChildScrollView(
+                        controller: widget.controller,
+                        scrollDirection: Axis.horizontal,
+                        child: child,
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            : Scrollbar(
                 controller: widget.controller,
-                scrollDirection: Axis.horizontal,
-                child: child,
-              ),
-            ),
-          )
+                trackVisibility: true,
+                thickness: 5.0,
+                child: SizedBox(
+                  height: widget.size! * 9.5,
+                  child: SingleChildScrollView(
+                    controller: widget.controller,
+                    scrollDirection: Axis.horizontal,
+                    child: child,
+                  ),
+                ),
+              )
         : child;
   }
 
@@ -146,6 +171,7 @@ class _HeatMap extends State<HeatMap> {
       children: <Widget>[
         // Heatmap Widget.
         _scrollableHeatMap(HeatMapPage(
+          isVertical: widget.isVertical,
           endDate: widget.endDate ?? DateTime.now(),
           startDate: widget.startDate ??
               DateUtil.oneYearBefore(widget.endDate ?? DateTime.now()),

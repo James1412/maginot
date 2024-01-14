@@ -74,9 +74,10 @@ class HeatMapPage extends StatelessWidget {
   final Function(DateTime)? onClick;
 
   final bool? showText;
+  final bool isVertical;
 
   HeatMapPage({
-    Key? key,
+    super.key,
     required this.colorMode,
     required this.startDate,
     required this.endDate,
@@ -90,9 +91,9 @@ class HeatMapPage extends StatelessWidget {
     this.onClick,
     this.margin,
     this.showText,
+    required this.isVertical,
   })  : _dateDifferent = endDate.difference(startDate).inDays,
-        maxValue = DatasetsUtil.getMaxValue(datasets),
-        super(key: key);
+        maxValue = DatasetsUtil.getMaxValue(datasets);
 
   /// Get [HeatMapColumn] from [startDate] to [endDate].
   List<Widget> _heatmapColumnList() {
@@ -105,7 +106,7 @@ class HeatMapPage extends StatelessWidget {
         datePos <= _dateDifferent;
         datePos += 7) {
       // Get first day of week by adding cursor's value to startDate.
-      DateTime _firstDay = DateUtil.changeDay(startDate, datePos);
+      DateTime firstDay = DateUtil.changeDay(startDate, datePos);
 
       columns.add(HeatMapColumn(
         // If last day is not saturday, week also includes future Date.
@@ -113,12 +114,12 @@ class HeatMapPage extends StatelessWidget {
         //
         // To make empty space to future day, we have to pass this HeatMapPage's
         // endDate to HeatMapColumn's endDate.
-        startDate: _firstDay,
+        startDate: firstDay,
         endDate: datePos <= _dateDifferent - 7
             ? DateUtil.changeDay(startDate, datePos + 6)
             : endDate,
         colorMode: colorMode,
-        numDays: min(endDate.difference(_firstDay).inDays + 1, 7),
+        numDays: min(endDate.difference(firstDay).inDays + 1, 7),
         size: size,
         fontSize: fontSize,
         defaultColor: defaultColor,
@@ -133,7 +134,7 @@ class HeatMapPage extends StatelessWidget {
       ));
 
       // also add first day's month information to _firstDayInfos list.
-      _firstDayInfos.add(_firstDay.month);
+      _firstDayInfos.add(firstDay.month);
     }
 
     return columns;
@@ -148,6 +149,7 @@ class HeatMapPage extends StatelessWidget {
           children: [
             // Show week labels to left side of heatmap.
             HeatMapWeekText(
+              isVertical: isVertical,
               margin: margin,
               fontSize: fontSize,
               size: size,
@@ -158,6 +160,7 @@ class HeatMapPage extends StatelessWidget {
               children: [
                 // Show month labels to top of heatmap.
                 HeatMapMonthText(
+                  isVertical: isVertical,
                   firstDayInfos: _firstDayInfos,
                   margin: margin,
                   fontSize: fontSize,
