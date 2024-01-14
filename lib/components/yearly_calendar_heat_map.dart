@@ -41,8 +41,25 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
     super.dispose();
   }
 
+  List deadlineOnDate = [];
+
   @override
   Widget build(BuildContext context) {
+    // Handle Multiple Events On The Same Date
+    Map<DateTime, bool> resultMap = {};
+
+    for (var data in widget.deadline) {
+      DateTime date = data[0];
+      bool hasFalseValue =
+          resultMap.containsKey(date) ? resultMap[date]! : false;
+
+      if (data.length > 3 && data[3] == false) {
+        hasFalseValue = true;
+      }
+
+      resultMap[date] = hasFalseValue;
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: HeatMap(
@@ -74,8 +91,10 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
                     .add(Duration(days: dayNum))
                     .day): 1,
 
+          // Add datasets from the input
           for (List deadline in widget.deadline)
-            deadline[0].add(const Duration(days: 0)): deadline[1],
+            deadline[0].add(const Duration(days: 0)):
+                resultMap[deadline[0]] == false ? 3 : 2,
         },
         colorsets: {
           1: Color(context.watch<ColorsConfigViewModel>().pastdayColor),
@@ -85,36 +104,59 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
         size: 53,
         showColorTip: false,
         onClick: (value) {
+          deadlineOnDate.clear();
+          for (List list in widget.deadline) {
+            if (list[0] == value) {
+              if (!deadlineOnDate.contains(list)) {
+                deadlineOnDate.add(list[2]);
+                setState(() {});
+              }
+            }
+          }
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              content: Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.shade400,
-                      blurRadius: 1,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
-                ),
-                child: Text(
-                  "Date: ${value.toString().split(" ")[0]}",
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ),
+            dateSnackBar(value),
           );
         },
+      ),
+    );
+  }
+
+  SnackBar dateSnackBar(DateTime value) {
+    return SnackBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      content: Container(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade400,
+              blurRadius: 1,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Text(
+              value.toString().split(" ")[0],
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+              ),
+            ),
+            for (String item in deadlineOnDate)
+              Text(
+                item,
+                style: const TextStyle(
+                  color: Colors.black,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

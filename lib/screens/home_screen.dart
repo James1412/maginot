@@ -55,6 +55,17 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  void onListTileTap(int index) {
+    setState(() {
+      deadlines[index][3] = !deadlines[index][3];
+      if (deadlines[index][3]) {
+        deadlines[index][1] = 3;
+      } else {
+        deadlines[index][1] = 2;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -83,20 +94,12 @@ class _HomeScreenState extends State<HomeScreen> {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: deadlines.length,
-              itemBuilder: (context, index) => GestureDetector(
-                onTap: () {
-                  setState(() {
-                    deadlines[index][3] = !deadlines[index][3];
-                    if (deadlines[index][3]) {
-                      deadlines[index][1] = 3;
-                    } else {
-                      deadlines[index][1] = 2;
-                    }
-                  });
-                },
+              itemBuilder: (context, index) => InkWell(
+                splashFactory: InkRipple.splashFactory,
+                onTap: () => onListTileTap(index),
                 child: Slidable(
                   endActionPane: ActionPane(
-                    motion: const ScrollMotion(),
+                    motion: const DrawerMotion(),
                     children: [
                       SlidableAction(
                         borderRadius: BorderRadius.circular(5),
@@ -111,19 +114,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                   child: ListTile(
+                    shape: Border(
+                        bottom: BorderSide(
+                            color: Colors.grey.shade400, width: 0.4)),
                     title: Text(deadlines[index][2]),
+                    subtitle:
+                        Text(deadlines[index][0].toString().split(" ")[0]),
                     leading: Checkbox(
                       activeColor: Colors.green,
-                      onChanged: (value) {
-                        setState(() {
-                          deadlines[index][3] = !deadlines[index][3];
-                          if (deadlines[index][3]) {
-                            deadlines[index][1] = 3;
-                          } else {
-                            deadlines[index][1] = 2;
-                          }
-                        });
-                      },
+                      onChanged: (value) => onListTileTap(index),
                       value: deadlines[index][3],
                     ),
                     trailing: const Icon(Icons.chevron_left),
