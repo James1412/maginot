@@ -54,7 +54,7 @@ class _MaginotDialogState extends State<MaginotDialog> {
                     return null;
                   },
                   controller: widget.controller,
-                  cursorColor: Colors.green,
+                  cursorColor: Theme.of(context).primaryColor,
                   decoration: const InputDecoration(
                     hintText: "Task",
                     border: OutlineInputBorder(
@@ -104,8 +104,10 @@ class _MaginotDialogState extends State<MaginotDialog> {
               TextButton(
                 onPressed: onSavePressed,
                 style: ButtonStyle(
-                  foregroundColor: const MaterialStatePropertyAll(Colors.green),
-                  overlayColor: MaterialStatePropertyAll(Colors.green.shade100),
+                  foregroundColor:
+                      MaterialStatePropertyAll(Theme.of(context).primaryColor),
+                  overlayColor: MaterialStatePropertyAll(
+                      Theme.of(context).primaryColor.withOpacity(0.2)),
                 ),
                 child: const Text("Add"),
               ),

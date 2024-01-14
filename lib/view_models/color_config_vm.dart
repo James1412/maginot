@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:maginot/box_names.dart';
-import 'package:maginot/models/color_config_model.dart';
+import 'package:maginot/heat_map/color_config_model.dart';
 import 'package:maginot/repos/color_config_repo.dart';
 
 class ColorsConfigViewModel extends ChangeNotifier {

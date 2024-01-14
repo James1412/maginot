@@ -4,6 +4,7 @@ import 'package:maginot/box_names.dart';
 import 'package:maginot/repos/color_config_repo.dart';
 import 'package:maginot/repos/is_vertical_repo.dart';
 import 'package:maginot/screens/home_screen.dart';
+import 'package:maginot/utils.dart';
 import 'package:maginot/view_models/color_config_vm.dart';
 import 'package:maginot/view_models/is_vertical_vm.dart';
 import 'package:provider/provider.dart';
@@ -36,6 +37,10 @@ class MaginotApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
+        primarySwatch: getMaterialColor(
+            Color(context.watch<ColorsConfigViewModel>().pastdayColor)),
+        primaryColor:
+            Color(context.watch<ColorsConfigViewModel>().pastdayColor),
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.grey.shade300,
           shadowColor: Colors.grey.shade300,

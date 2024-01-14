@@ -53,7 +53,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Column(
               children: [
                 SwitchListTile(
-                  activeColor: Colors.green,
+                  activeColor: Theme.of(context).primaryColor,
                   inactiveTrackColor: Colors.grey.shade300,
                   inactiveThumbColor: Colors.grey.shade600,
                   trackOutlineColor:

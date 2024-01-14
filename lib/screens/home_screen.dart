@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:maginot/components/maginot_dialog.dart';
 import 'package:maginot/components/yearly_calendar_heat_map.dart';
 import 'package:maginot/screens/settings.dart';
+import 'package:maginot/view_models/color_config_vm.dart';
 import 'package:maginot/view_models/is_vertical_vm.dart';
 import 'package:provider/provider.dart';
 
@@ -183,8 +184,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          splashColor: Colors.green,
-          backgroundColor: Colors.green.shade300,
+          splashColor:
+              Color(context.watch<ColorsConfigViewModel>().pastdayColor),
+          backgroundColor:
+              Color(context.watch<ColorsConfigViewModel>().pastdayColor)
+                  .withOpacity(0.7),
           foregroundColor: Colors.white,
           onPressed: onAddDeadlinePressed,
           child: const Icon(
