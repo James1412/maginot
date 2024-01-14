@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:maginot/view_models/color_config_vm.dart';
+import 'package:provider/provider.dart';
 
 import '../heat_map/data/heatmap_color_mode.dart';
 import '../heat_map/heatmap.dart';
 
 class HeatMapWidget extends StatefulWidget {
-  const HeatMapWidget({super.key});
+  final List<List<dynamic>> deadline;
+  const HeatMapWidget({super.key, required this.deadline});
 
   @override
   State<HeatMapWidget> createState() => _HeatMapWidgetState();
@@ -12,12 +15,31 @@ class HeatMapWidget extends StatefulWidget {
 
 class _HeatMapWidgetState extends State<HeatMapWidget> {
   final int currentYear = DateTime.now().year;
-  final deadline = DateTime(DateTime.now().year, 1, 20);
+  final int currentMonth = DateTime.now().month;
+  final int currentDay = DateTime.now().day;
+
   final ScrollController _controller = ScrollController(
-      initialScrollOffset:
-          (DateTime.now().difference(DateTime(2024, 1, 1)).inDays / 7) /
-              52 *
-              2557);
+      initialScrollOffset: (DateTime.utc(DateTime.now().year,
+                      DateTime.now().month, DateTime.now().day)
+                  .difference(DateTime(2024, 1, 1))
+                  .inDays /
+              7) /
+          52 *
+          2641);
+
+  @override
+  void initState() {
+    _controller.addListener(() {
+      print(_controller.offset);
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +59,7 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
           // Color all previous days in current year
           for (var dayNum = 0;
               dayNum <=
-                  DateTime.utc(2024, 10, 31)
+                  DateTime.utc(currentYear, currentMonth, currentDay)
                       .difference(DateTime.utc(currentYear - 1, 12, 31))
                       .inDays;
               dayNum++)
@@ -52,14 +74,15 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
                     .add(Duration(days: dayNum))
                     .day): 1,
 
-          deadline: 2,
+          for (List deadline in widget.deadline)
+            deadline[0].add(const Duration(days: 0)): deadline[1],
         },
         colorsets: {
-          1: Colors.green.shade400,
-          2: Colors.red.shade400,
-          3: Colors.yellow,
+          1: Color(context.watch<ColorsConfigViewModel>().pastdayColor),
+          2: Color(context.watch<ColorsConfigViewModel>().incompleteColor),
+          3: Color(context.watch<ColorsConfigViewModel>().completeColor),
         },
-        size: 50,
+        size: 53,
         showColorTip: false,
         onClick: (value) {
           ScaffoldMessenger.of(context).hideCurrentSnackBar();

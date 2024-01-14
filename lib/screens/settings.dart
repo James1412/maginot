@@ -1,6 +1,8 @@
 import 'package:flex_color_picker/flex_color_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:maginot/box_names.dart';
+import 'package:maginot/view_models/color_config_vm.dart';
+import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -10,34 +12,31 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  Color inCompleteColor = Colors.red.shade400;
-  Color completedColor = Colors.green.shade700;
-  Color finishedDayColor = Colors.green.shade300;
-
   Future<void> onColorChangeTap(String text) async {
-    if (text == "complete") {
-      completedColor = await showColorPickerDialog(
+    var selectedColor = Colors.white;
+    if (text == complete) {
+      selectedColor = await showColorPickerDialog(
         context,
-        completedColor,
+        Color(context.read<ColorsConfigViewModel>().completeColor),
       );
-    } else if (text == "finishedDay") {
-      finishedDayColor = await showColorPickerDialog(
-        context,
-        finishedDayColor,
-      );
+    } else if (text == pastday) {
+      selectedColor = await showColorPickerDialog(
+          context, Color(context.read<ColorsConfigViewModel>().pastdayColor));
     } else {
-      inCompleteColor = await showColorPickerDialog(
-        context,
-        inCompleteColor,
-      );
+      selectedColor = await showColorPickerDialog(context,
+          Color(context.read<ColorsConfigViewModel>().incompleteColor));
     }
+    var returnValue = "0xff${selectedColor.hex}";
+    if (!mounted) return;
+    context
+        .read<ColorsConfigViewModel>()
+        .setColor(text, int.parse(returnValue));
     setState(() {});
   }
 
   void changeToDefaultColors() {
-    inCompleteColor = Colors.red.shade400;
-    completedColor = Colors.green.shade700;
-    finishedDayColor = Colors.green.shade300;
+    context.read<ColorsConfigViewModel>().defaultColor();
+
     setState(() {});
   }
 
@@ -53,40 +52,44 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Column(
               children: [
                 ListTile(
-                  onTap: () => onColorChangeTap('incomplete'),
+                  onTap: () => onColorChangeTap(incomplete),
                   title: const Text("Change due date color"),
                   trailing: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
+                    duration: const Duration(milliseconds: 700),
                     width: 25,
                     height: 25,
                     decoration: BoxDecoration(
-                      color: inCompleteColor,
+                      color: Color(context
+                          .watch<ColorsConfigViewModel>()
+                          .incompleteColor),
                       borderRadius: BorderRadius.circular(6),
                     ),
                   ),
                 ),
                 ListTile(
-                  onTap: () => onColorChangeTap('complete'),
+                  onTap: () => onColorChangeTap(complete),
                   title: const Text("Change finished task color"),
                   trailing: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
+                    duration: const Duration(milliseconds: 700),
                     width: 25,
                     height: 25,
                     decoration: BoxDecoration(
-                      color: completedColor,
+                      color: Color(
+                          context.watch<ColorsConfigViewModel>().completeColor),
                       borderRadius: BorderRadius.circular(6),
                     ),
                   ),
                 ),
                 ListTile(
-                  onTap: () => onColorChangeTap('finishedDay'),
-                  title: const Text("Change finished day color"),
+                  onTap: () => onColorChangeTap(pastday),
+                  title: const Text("Change past day color"),
                   trailing: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
+                    duration: const Duration(milliseconds: 700),
                     width: 25,
                     height: 25,
                     decoration: BoxDecoration(
-                      color: finishedDayColor,
+                      color: Color(
+                          context.watch<ColorsConfigViewModel>().pastdayColor),
                       borderRadius: BorderRadius.circular(6),
                     ),
                   ),

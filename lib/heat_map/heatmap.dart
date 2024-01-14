@@ -121,12 +121,6 @@ class _HeatMap extends State<HeatMap> {
     super.initState();
   }
 
-  @override
-  void dispose() {
-    widget.controller.dispose();
-    super.dispose();
-  }
-
   Widget _scrollableHeatMap(Widget child) {
     return widget.scrollable
         ? Scrollbar(
