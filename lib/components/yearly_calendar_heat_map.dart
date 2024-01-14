@@ -17,6 +17,7 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
   final int currentYear = DateTime.now().year;
   final int currentMonth = DateTime.now().month;
   final int currentDay = DateTime.now().day;
+  final DateTime lastDayinYear = DateTime(DateTime.now().year, 12, 31);
 
   final ScrollController _controller = ScrollController(
       initialScrollOffset: (DateTime.utc(DateTime.now().year,
@@ -45,34 +46,35 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // Handle Multiple Events On The Same Date
     Map<DateTime, bool> resultMap = {};
+    var highestDate = DateTime(currentYear, currentMonth, currentDay);
+    if (widget.deadline.isNotEmpty) {
+      // Handle Multiple Events On The Same Date
+      for (var data in widget.deadline) {
+        DateTime date = data[0];
+        bool hasFalseValue =
+            resultMap.containsKey(date) ? resultMap[date]! : false;
 
-    for (var data in widget.deadline) {
-      DateTime date = data[0];
-      bool hasFalseValue =
-          resultMap.containsKey(date) ? resultMap[date]! : false;
+        if (data.length > 3 && data[3] == false) {
+          hasFalseValue = true;
+        }
 
-      if (data.length > 3 && data[3] == false) {
-        hasFalseValue = true;
+        resultMap[date] = hasFalseValue;
       }
 
-      resultMap[date] = hasFalseValue;
+      // Sorted by date: highest -> lowest
+      var sortedDates = resultMap.keys.toList(growable: false)
+        ..sort((a, b) => b.compareTo(a));
+      highestDate = sortedDates.first;
     }
-
-    // Sorted by date: highest -> lowest
-    var sortedDates = resultMap.keys.toList(growable: false)
-      ..sort((a, b) => b.compareTo(a));
-    var highestDate = sortedDates.first;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: HeatMap(
         controller: _controller,
         startDate: DateTime(currentYear, 1, 1),
-        endDate: highestDate.isAfter(DateTime(currentYear, 12, 31))
-            ? highestDate
-            : DateTime(currentYear, 12, 31),
+        endDate:
+            highestDate.isAfter(lastDayinYear) ? highestDate : lastDayinYear,
         scrollable: true,
         colorMode: ColorMode.color,
         datasets: {

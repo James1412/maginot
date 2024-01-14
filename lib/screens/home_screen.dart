@@ -98,8 +98,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 splashFactory: InkRipple.splashFactory,
                 onTap: () => onListTileTap(index),
                 child: Slidable(
+                  key: const ValueKey(0),
                   endActionPane: ActionPane(
                     motion: const DrawerMotion(),
+                    dismissible: DismissiblePane(onDismissed: () {
+                      setState(() {
+                        deadlines.removeAt(index);
+                      });
+                    }),
                     children: [
                       SlidableAction(
                         borderRadius: BorderRadius.circular(5),
