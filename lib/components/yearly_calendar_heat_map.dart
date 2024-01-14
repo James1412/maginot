@@ -60,12 +60,19 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
       resultMap[date] = hasFalseValue;
     }
 
+    // Sorted by date: highest -> lowest
+    var sortedDates = resultMap.keys.toList(growable: false)
+      ..sort((a, b) => b.compareTo(a));
+    var highestDate = sortedDates.first;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: HeatMap(
         controller: _controller,
         startDate: DateTime(currentYear, 1, 1),
-        endDate: DateTime(currentYear, 12, 31),
+        endDate: highestDate.isAfter(DateTime(currentYear, 12, 31))
+            ? highestDate
+            : DateTime(currentYear, 12, 31),
         scrollable: true,
         colorMode: ColorMode.color,
         datasets: {
@@ -145,9 +152,17 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
               value.toString().split(" ")[0],
               style: const TextStyle(
                 color: Colors.black,
-                fontSize: 16,
+                fontSize: 17,
               ),
             ),
+            if (deadlineOnDate.isNotEmpty)
+              const Text(
+                "Tasks",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 15,
+                ),
+              ),
             for (String item in deadlineOnDate)
               Text(
                 item,
