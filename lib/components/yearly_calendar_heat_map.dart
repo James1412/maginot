@@ -7,7 +7,7 @@ import '../heat_map/data/heatmap_color_mode.dart';
 import '../heat_map/heatmap.dart';
 
 class HeatMapWidget extends StatefulWidget {
-  final List<List<dynamic>> deadlines;
+  final List deadlines;
   const HeatMapWidget({super.key, required this.deadlines});
 
   @override
@@ -62,9 +62,7 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
     }
 
     return Padding(
-      padding: !context.watch<IsVerticalViewModel>().isVertical
-          ? const EdgeInsets.symmetric(horizontal: 10.0)
-          : const EdgeInsets.only(right: 10.0),
+      padding: const EdgeInsets.symmetric(horizontal: 5),
       child: HeatMap(
         isVertical: context.watch<IsVerticalViewModel>().isVertical,
         controller: _controller,
@@ -106,7 +104,7 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
           2: Color(context.watch<ColorsConfigViewModel>().incompleteColor),
           3: Color(context.watch<ColorsConfigViewModel>().completeColor),
         },
-        size: 47,
+        size: MediaQuery.of(context).size.width * 0.112,
         showColorTip: false,
         onClick: (value) {
           deadlinesOnDate.clear();

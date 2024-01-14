@@ -35,7 +35,7 @@ class _MaginotDialogState extends State<MaginotDialog> {
       child: AlertDialog(
         title: const Text("Add new maginot"),
         content: SizedBox(
-          height: 270,
+          height: 250,
           width: 250,
           child: Column(
             children: [
@@ -72,7 +72,7 @@ class _MaginotDialogState extends State<MaginotDialog> {
                 height: 20,
               ),
               SizedBox(
-                height: 150,
+                height: 140,
                 child: CupertinoDatePicker(
                   minimumDate: DateTime.now(),
                   mode: CupertinoDatePickerMode.date,

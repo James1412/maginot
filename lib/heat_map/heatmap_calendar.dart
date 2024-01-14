@@ -88,7 +88,7 @@ class HeatMapCalendar extends StatefulWidget {
   final double? colorTipSize;
 
   const HeatMapCalendar({
-    Key? key,
+    super.key,
     required this.colorsets,
     this.colorMode = ColorMode.opacity,
     this.defaultColor,
@@ -109,7 +109,7 @@ class HeatMapCalendar extends StatefulWidget {
     this.colorTipHelper,
     this.colorTipCount,
     this.colorTipSize,
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() => _HeatMapCalendar();
@@ -154,9 +154,7 @@ class _HeatMapCalendar extends State<HeatMapCalendar> {
 
         // Text which shows the current year and month
         Text(
-          DateUtil.MONTH_LABEL[_currentDate?.month ?? 0] +
-              ' ' +
-              (_currentDate?.year).toString(),
+          '${DateUtil.MONTH_LABEL[_currentDate?.month ?? 0]} ${_currentDate?.year}',
           style: TextStyle(
             fontSize: widget.monthFontSize ?? 12,
           ),

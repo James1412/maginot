@@ -14,6 +14,7 @@ void main() async {
   await Hive.initFlutter();
   await Hive.openBox(colorBoxName);
   await Hive.openBox(isverticalBoxName);
+  await Hive.openBox(taskBoxName);
 
   final colorRepository = ColorConfigRepository();
   final verticalRepository = IsVerticalRepository();
@@ -42,11 +43,11 @@ class MaginotApp extends StatelessWidget {
         primaryColor:
             Color(context.watch<ColorsConfigViewModel>().pastdayColor),
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.grey.shade300,
-          shadowColor: Colors.grey.shade300,
-          surfaceTintColor: Colors.grey.shade300,
+          backgroundColor: Colors.grey.shade200,
+          shadowColor: Colors.grey.shade200,
+          surfaceTintColor: Colors.grey.shade200,
         ),
-        scaffoldBackgroundColor: Colors.grey.shade300,
+        scaffoldBackgroundColor: Colors.grey.shade200,
         dialogBackgroundColor: Colors.grey.shade100,
         dialogTheme: DialogTheme(
           backgroundColor: Colors.grey.shade100,
