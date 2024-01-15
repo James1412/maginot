@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:maginot/box_names.dart';
-import 'package:maginot/components/maginot_dialog.dart';
 import 'package:maginot/screens/settings.dart';
 import 'package:maginot/view_models/color_config_vm.dart';
 import 'package:provider/provider.dart';
@@ -11,11 +10,13 @@ class TaskListScreen extends StatefulWidget {
   final taskBox;
   final taskdb;
   final Function onAdd;
+  final Function onDeleteTask;
   const TaskListScreen(
       {super.key,
       required this.taskBox,
       required this.taskdb,
-      required this.onAdd});
+      required this.onAdd,
+      required this.onDeleteTask});
 
   @override
   State<TaskListScreen> createState() => _TaskListScreenState();
@@ -93,22 +94,14 @@ class _TaskListScreenState extends State<TaskListScreen> {
               key: const ValueKey(0),
               endActionPane: ActionPane(
                 motion: const DrawerMotion(),
-                dismissible: DismissiblePane(onDismissed: () {
-                  setState(() {
-                    widget.taskdb.deadlines.removeAt(index);
-                  });
-                  widget.taskdb.updateDataBase();
-                }),
+                dismissible: DismissiblePane(
+                    key: UniqueKey(),
+                    onDismissed: () => widget.onDeleteTask(index, context)),
                 children: [
                   SlidableAction(
                     borderRadius: BorderRadius.circular(5),
                     backgroundColor: Colors.red,
-                    onPressed: (context) {
-                      setState(() {
-                        widget.taskdb.deadlines.removeAt(index);
-                      });
-                      widget.taskdb.updateDataBase();
-                    },
+                    onPressed: (value) => widget.onDeleteTask(index, context),
                     icon: Icons.delete,
                   ),
                 ],
@@ -141,7 +134,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                 Color(context.watch<ColorsConfigViewModel>().pastdayColor)
                     .withOpacity(0.7),
             foregroundColor: Colors.white,
-            onPressed: () => widget.onAdd(_controller),
+            onPressed: () => widget.onAdd(_controller, context),
             child: const Icon(
               Icons.add,
             ),

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';
 import 'package:maginot/box_names.dart';
 import 'package:maginot/components/maginot_dialog.dart';
 import 'package:maginot/databases/task_database.dart';
 import 'package:maginot/screens/home_screen.dart';
 import 'package:maginot/screens/task_list_screen.dart';
+import 'package:maginot/services/notification_id_counter.dart';
+import 'package:maginot/services/notification_service.dart';
+import 'package:provider/provider.dart';
 
 class BottomNavigationScreen extends StatefulWidget {
   const BottomNavigationScreen({super.key});
@@ -18,8 +20,10 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
   int selectedIndex = 0;
   final _taskBox = Hive.box(taskBoxName);
   final taskdb = TaskDatabase();
+  final idBox = Hive.box(idBoxName);
 
-  Future<void> onAddDeadlinePressed(TextEditingController controller) async {
+  Future<void> onAddDeadlinePressed(
+      TextEditingController controller, BuildContext context) async {
     List? textAndDates = await showDialog(
       context: context,
       builder: (context) => MaginotDialog(
@@ -27,9 +31,41 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
       ),
     );
     if (textAndDates != null) {
-      taskdb.deadlines.add([textAndDates[1], 2, textAndDates[0], false]);
+      if (!mounted) return;
+      context.read<NotificationIDCounter>().incrementId();
+      // Add to the database and sort it by Dates
+      taskdb.deadlines.add([
+        textAndDates[1],
+        2,
+        textAndDates[0],
+        false,
+        idBox.get('id'),
+      ]);
+      taskdb.deadlines.sort((a, b) => a[0].compareTo(b[0]));
+      taskdb.updateDataBase();
+      // If selectedDate is not today, send notifications
+      if (textAndDates[1] !=
+          DateTime(
+              DateTime.now().year, DateTime.now().month, DateTime.now().day)) {
+        NotificationService().scheduleNotification(
+            id: idBox.get('id'),
+            title: "${textAndDates[0]} is coming soon",
+            body: "Check the deadline",
+            scheduledNotificationDateTime:
+                DateTime.now().add(const Duration(seconds: 5)));
+        print("Added ${idBox.get('id')}");
+      }
       setState(() {});
     }
+  }
+
+  Future<void> onDeleteTask(int index, BuildContext context) async {
+    print("Removed ${taskdb.deadlines[index][4]}");
+    await NotificationService()
+        .cancelScheduledNotification(taskdb.deadlines[index][4]);
+    setState(() {
+      taskdb.deadlines.removeAt(index);
+    });
     taskdb.updateDataBase();
   }
 
@@ -49,6 +85,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
           Offstage(
             offstage: selectedIndex != 1,
             child: TaskListScreen(
+              onDeleteTask: onDeleteTask,
               onAdd: onAddDeadlinePressed,
               taskBox: _taskBox,
               taskdb: taskdb,

@@ -8,6 +8,7 @@ class TaskDatabase {
 
   void createInitialData() {
     deadlines = [
+      // DateTime, colorset, text, isFinished, id
       [
         DateTime(
           DateTime.now().year,
@@ -21,6 +22,7 @@ class TaskDatabase {
         2,
         "Do homework",
         false,
+        0,
       ],
     ];
   }

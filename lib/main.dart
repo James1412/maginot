@@ -4,6 +4,7 @@ import 'package:maginot/box_names.dart';
 import 'package:maginot/screens/bottom_navigation.dart';
 import 'package:maginot/repos/color_config_repo.dart';
 import 'package:maginot/repos/is_vertical_repo.dart';
+import 'package:maginot/services/notification_id_counter.dart';
 import 'package:maginot/services/notification_service.dart';
 import 'package:maginot/utils.dart';
 import 'package:maginot/view_models/color_config_vm.dart';
@@ -16,6 +17,7 @@ void main() async {
   await Hive.openBox(colorBoxName);
   await Hive.openBox(isverticalBoxName);
   await Hive.openBox(taskBoxName);
+  await Hive.openBox(idBoxName);
 
   NotificationService().initNotification();
 
@@ -28,6 +30,7 @@ void main() async {
             create: (context) => ColorsConfigViewModel(colorRepository)),
         ChangeNotifierProvider(
             create: (context) => IsVerticalViewModel(verticalRepository)),
+        ChangeNotifierProvider(create: (context) => NotificationIDCounter()),
       ],
       child: const MaginotApp(),
     ),

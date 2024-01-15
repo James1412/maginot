@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:maginot/box_names.dart';
-import 'package:maginot/components/maginot_dialog.dart';
 import 'package:maginot/components/yearly_calendar_heat_map.dart';
 import 'package:maginot/screens/settings.dart';
 import 'package:maginot/view_models/color_config_vm.dart';
@@ -116,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Color(context.watch<ColorsConfigViewModel>().pastdayColor)
                     .withOpacity(0.7),
             foregroundColor: Colors.white,
-            onPressed: () => widget.onAdd(_controller),
+            onPressed: () => widget.onAdd(_controller, context),
             child: const Icon(
               Icons.add,
             ),
