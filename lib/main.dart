@@ -48,6 +48,7 @@ class MaginotApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: getMaterialColor(
             Color(context.watch<ColorsConfigViewModel>().pastdayColor)),

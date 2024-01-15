@@ -111,15 +111,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   onTap: changeToDefaultColors,
                   title: const Text("Change to default colors"),
                 ),
-                ListTile(
-                  title: const Text("Notify"),
-                  onTap: () {
-                    NotificationService().showNotification(
-                      title: "Sample",
-                      body: "It works",
-                    );
-                  },
-                ),
               ],
             ),
             const Column(

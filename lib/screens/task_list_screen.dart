@@ -27,7 +27,6 @@ class TaskListScreen extends StatefulWidget {
 class _TaskListScreenState extends State<TaskListScreen> {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  static const _kAdIndex = 4;
   BannerAd? _ad;
 
   @override
@@ -148,7 +147,14 @@ class _TaskListScreenState extends State<TaskListScreen> {
                           shape: Border(
                               bottom: BorderSide(
                                   color: Colors.grey.shade400, width: 0.4)),
-                          title: Text(widget.taskdb.deadlines[index][2]),
+                          title: Text(
+                            widget.taskdb.deadlines[index][2],
+                            style: TextStyle(
+                              decoration: widget.taskdb.deadlines[index][3]
+                                  ? TextDecoration.lineThrough
+                                  : null,
+                            ),
+                          ),
                           subtitle: Text(widget.taskdb.deadlines[index][0]
                               .toString()
                               .split(" ")[0]),

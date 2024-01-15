@@ -132,15 +132,15 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
       backgroundColor: Colors.transparent,
       elevation: 0,
       content: Container(
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: Colors.white,
+          color: Colors.grey.shade100,
           boxShadow: [
             BoxShadow(
+              offset: Offset(0, 2),
               color: Colors.grey.shade400,
-              blurRadius: 1,
-              offset: const Offset(0, 5),
+              blurRadius: 5,
             ),
           ],
         ),

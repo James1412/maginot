@@ -9,6 +9,9 @@ class NotificationIDCounter extends ChangeNotifier {
 
   void incrementId() {
     id++;
+    if (idBox.get('id') == null) {
+      idBox.put('id', 0);
+    }
     idBox.put('id', idBox.get('id') + 1);
     notifyListeners();
   }
