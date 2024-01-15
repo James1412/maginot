@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:maginot/ad_helper.dart';
 import 'package:maginot/box_names.dart';
 import 'package:maginot/screens/settings.dart';
 import 'package:maginot/view_models/color_config_vm.dart';
@@ -25,6 +27,8 @@ class TaskListScreen extends StatefulWidget {
 class _TaskListScreenState extends State<TaskListScreen> {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  static const _kAdIndex = 4;
+  BannerAd? _ad;
 
   @override
   void initState() {
@@ -35,6 +39,24 @@ class _TaskListScreenState extends State<TaskListScreen> {
       widget.taskdb.loadData();
     }
     widget.taskdb.updateDataBase();
+
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: BannerAdListener(onAdLoaded: (ad) {
+        setState(() {
+          _ad = ad as BannerAd;
+        });
+      }, onAdFailedToLoad: (ad, error) {
+        ad.dispose();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                  "Ad load failed (code=${error.code}) message=${error.message}")),
+        );
+      }),
+    ).load();
   }
 
   void onSettingsTap() {
@@ -88,47 +110,59 @@ class _TaskListScreenState extends State<TaskListScreen> {
             ? const Center(
                 child: Text("Add a new task!"),
               )
-            : ListView.builder(
-                shrinkWrap: true,
-                itemCount: widget.taskdb.deadlines.length,
-                itemBuilder: (context, index) => InkWell(
-                  splashFactory: InkRipple.splashFactory,
-                  onTap: () => onListTileTap(index),
-                  child: Slidable(
-                    key: const ValueKey(0),
-                    endActionPane: ActionPane(
-                      motion: const DrawerMotion(),
-                      dismissible: DismissiblePane(
-                          key: UniqueKey(),
-                          onDismissed: () =>
-                              widget.onDeleteTask(index, context)),
-                      children: [
-                        SlidableAction(
-                          borderRadius: BorderRadius.circular(5),
-                          backgroundColor: Colors.red,
-                          onPressed: (value) =>
-                              widget.onDeleteTask(index, context),
-                          icon: Icons.delete,
-                        ),
-                      ],
+            : ListView(
+                children: [
+                  if (_ad != null)
+                    Container(
+                      width: _ad!.size.width.toDouble(),
+                      height: 72,
+                      alignment: Alignment.center,
+                      child: AdWidget(ad: _ad!),
                     ),
-                    child: ListTile(
-                      shape: Border(
-                          bottom: BorderSide(
-                              color: Colors.grey.shade400, width: 0.4)),
-                      title: Text(widget.taskdb.deadlines[index][2]),
-                      subtitle: Text(widget.taskdb.deadlines[index][0]
-                          .toString()
-                          .split(" ")[0]),
-                      leading: Checkbox(
-                        activeColor: Theme.of(context).primaryColor,
-                        onChanged: (value) => onListTileTap(index),
-                        value: widget.taskdb.deadlines[index][3],
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: widget.taskdb.deadlines.length,
+                    itemBuilder: (context, index) => InkWell(
+                      splashFactory: InkRipple.splashFactory,
+                      onTap: () => onListTileTap(index),
+                      child: Slidable(
+                        key: const ValueKey(0),
+                        endActionPane: ActionPane(
+                          motion: const DrawerMotion(),
+                          dismissible: DismissiblePane(
+                              key: UniqueKey(),
+                              onDismissed: () =>
+                                  widget.onDeleteTask(index, context)),
+                          children: [
+                            SlidableAction(
+                              borderRadius: BorderRadius.circular(5),
+                              backgroundColor: Colors.red,
+                              onPressed: (value) =>
+                                  widget.onDeleteTask(index, context),
+                              icon: Icons.delete,
+                            ),
+                          ],
+                        ),
+                        child: ListTile(
+                          shape: Border(
+                              bottom: BorderSide(
+                                  color: Colors.grey.shade400, width: 0.4)),
+                          title: Text(widget.taskdb.deadlines[index][2]),
+                          subtitle: Text(widget.taskdb.deadlines[index][0]
+                              .toString()
+                              .split(" ")[0]),
+                          leading: Checkbox(
+                            activeColor: Theme.of(context).primaryColor,
+                            onChanged: (value) => onListTileTap(index),
+                            value: widget.taskdb.deadlines[index][3],
+                          ),
+                          trailing: const Icon(Icons.chevron_left),
+                        ),
                       ),
-                      trailing: const Icon(Icons.chevron_left),
                     ),
                   ),
-                ),
+                ],
               ),
         floatingActionButton: AnimatedOpacity(
           duration: const Duration(microseconds: 100),

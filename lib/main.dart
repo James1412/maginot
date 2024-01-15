@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:maginot/box_names.dart';
 import 'package:maginot/screens/bottom_navigation.dart';
@@ -39,6 +40,10 @@ void main() async {
 
 class MaginotApp extends StatelessWidget {
   const MaginotApp({super.key});
+
+  Future<InitializationStatus> _initGoogleMobileAds() async {
+    return MobileAds.instance.initialize();
+  }
 
   @override
   Widget build(BuildContext context) {

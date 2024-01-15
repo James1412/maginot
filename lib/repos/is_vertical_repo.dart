@@ -9,6 +9,6 @@ class IsVerticalRepository {
   }
 
   bool isVertical() {
-    return _verticalBox.get(isverticalBoxName) ?? false;
+    return _verticalBox.get(isverticalBoxName) ?? true;
   }
 }
