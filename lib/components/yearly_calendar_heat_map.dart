@@ -41,6 +41,7 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
   Widget build(BuildContext context) {
     Map<DateTime, bool> resultMap = {};
     var highestDate = DateTime(currentYear, currentMonth, currentDay);
+    List<DateTime> sortedDates = [];
     if (widget.deadlines.isNotEmpty) {
       // Handle Multiple Events On The Same Date
       for (var data in widget.deadlines) {
@@ -56,7 +57,7 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
       }
 
       // Sorted by date: highest -> lowest
-      var sortedDates = resultMap.keys.toList(growable: false)
+      sortedDates = resultMap.keys.toList(growable: false)
         ..sort((a, b) => b.compareTo(a));
       highestDate = sortedDates.first;
     }
@@ -64,6 +65,7 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: HeatMap(
+        showText: true,
         isVertical: context.watch<IsVerticalViewModel>().isVertical,
         controller: _controller,
         startDate: DateTime(currentYear, 1, 1),
@@ -123,6 +125,18 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
             dateSnackBar(value),
           );
         },
+        // show the closest dday that is not finished, or else, show none
+        dday: resultMap.isEmpty
+            ? null
+            : resultMap[sortedDates.lastWhere(
+                (element) => resultMap[element] == true,
+                orElse: () => sortedDates[0],
+              )]!
+                ? "d-${sortedDates.lastWhere(
+                      (element) => resultMap[element] == true,
+                      orElse: () => sortedDates[0],
+                    ).difference(DateTime.now()).inDays + 1}"
+                : null,
       ),
     );
   }

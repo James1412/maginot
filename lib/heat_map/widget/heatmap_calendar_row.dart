@@ -64,6 +64,7 @@ class HeatMapCalendarRow extends StatelessWidget {
   ///
   /// Paratmeter gives clicked [DateTime] value.
   final Function(DateTime)? onClick;
+  final String dday;
 
   HeatMapCalendarRow({
     Key? key,
@@ -81,6 +82,7 @@ class HeatMapCalendarRow extends StatelessWidget {
     this.datasets,
     this.maxValue,
     this.onClick,
+    required this.dday,
   })  : dayContainers = List<Widget>.generate(
           7,
           // If current week has first day of the month and
@@ -102,6 +104,7 @@ class HeatMapCalendarRow extends StatelessWidget {
                 )
               // If the day is not a empty one then create HeatMapContainer.
               : HeatMapContainer(
+                  dday: dday,
                   // Given information about the week is that
                   // start day of week value and end day of week.
                   //

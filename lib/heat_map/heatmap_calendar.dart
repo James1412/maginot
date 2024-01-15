@@ -86,6 +86,7 @@ class HeatMapCalendar extends StatefulWidget {
 
   /// The double value of [HeatMapColorTip]'s tip container's size.
   final double? colorTipSize;
+  final String dday;
 
   const HeatMapCalendar({
     super.key,
@@ -109,6 +110,7 @@ class HeatMapCalendar extends StatefulWidget {
     this.colorTipHelper,
     this.colorTipCount,
     this.colorTipSize,
+    required this.dday,
   });
 
   @override
@@ -214,6 +216,7 @@ class _HeatMapCalendar extends State<HeatMapCalendar> {
           _header(),
           _weekLabel(),
           HeatMapCalendarPage(
+            dday: widget.dday,
             baseDate: _currentDate ?? DateTime.now(),
             colorMode: widget.colorMode,
             flexible: widget.flexible,

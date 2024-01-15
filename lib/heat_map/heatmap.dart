@@ -90,6 +90,7 @@ class HeatMap extends StatefulWidget {
   final double? colorTipSize;
   final ScrollController controller;
   final bool isVertical;
+  final String? dday;
 
   const HeatMap({
     super.key,
@@ -113,6 +114,7 @@ class HeatMap extends StatefulWidget {
     this.colorTipCount,
     this.colorTipSize,
     required this.isVertical,
+    required this.dday,
   });
 
   @override
@@ -186,6 +188,7 @@ class _HeatMap extends State<HeatMap> {
           onClick: widget.onClick,
           margin: widget.margin,
           showText: widget.showText,
+          dday: widget.dday,
         )),
 
         // Show HeatMapColorTip if showColorTip is true.

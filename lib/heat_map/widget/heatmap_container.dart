@@ -1,4 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:maginot/view_models/is_vertical_vm.dart';
+import 'package:provider/provider.dart';
 import '../data/heatmap_color.dart';
 
 class HeatMapContainer extends StatelessWidget {
@@ -12,6 +16,7 @@ class HeatMapContainer extends StatelessWidget {
   final EdgeInsets? margin;
   final bool? showText;
   final Function(DateTime dateTime)? onClick;
+  final String? dday;
 
   const HeatMapContainer({
     super.key,
@@ -25,6 +30,7 @@ class HeatMapContainer extends StatelessWidget {
     this.textColor,
     this.onClick,
     this.showText,
+    required this.dday,
   });
 
   @override
@@ -49,12 +55,37 @@ class HeatMapContainer extends StatelessWidget {
                   BorderRadius.all(Radius.circular(borderRadius ?? 5)),
             ),
             child: (showText ?? true)
-                ? Text(
-                    date.day.toString(),
-                    style: TextStyle(
-                        color: textColor ?? const Color(0xFF8A8A8A),
-                        fontSize: fontSize),
-                  )
+                ? (DateTime(date.year, date.month, date.day) ==
+                        DateTime(DateTime.now().year, DateTime.now().month,
+                            DateTime.now().day))
+                    ? (dday != null)
+                        ? (context.watch<IsVerticalViewModel>().isVertical)
+                            ? Transform(
+                                transform: Matrix4.rotationY(pi),
+                                alignment: Alignment.center,
+                                child: RotatedBox(
+                                  quarterTurns: 1,
+                                  child: Text(
+                                    dday!,
+                                    style: TextStyle(
+                                      color: textColor ??
+                                          Color.fromARGB(255, 94, 91, 91),
+                                      fontSize: fontSize,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Text(
+                                dday!,
+                                style: TextStyle(
+                                  color: textColor ??
+                                      Color.fromARGB(255, 94, 91, 91),
+                                  fontSize: fontSize,
+                                ),
+                              )
+                        : null
+                    : null
                 : null,
           ),
         ),

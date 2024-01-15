@@ -1,7 +1,6 @@
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:maginot/box_names.dart';
-import 'package:maginot/services/notification_service.dart';
 import 'package:maginot/view_models/color_config_vm.dart';
 import 'package:maginot/view_models/is_vertical_vm.dart';
 import 'package:provider/provider.dart';

@@ -72,6 +72,7 @@ class HeatMapColumn extends StatelessWidget {
   // The number of day blocks to draw. This should be seven for all but the
   // current week.
   final int numDays;
+  final String? dday;
 
   HeatMapColumn({
     Key? key,
@@ -90,11 +91,13 @@ class HeatMapColumn extends StatelessWidget {
     this.onClick,
     this.maxValue,
     this.showText,
+    required this.dday,
   })  :
         // Init list.
         dayContainers = List.generate(
           numDays,
           (i) => HeatMapContainer(
+            dday: dday,
             date: DateUtil.changeDay(startDate, i),
             backgroundColor: defaultColor,
             size: size,

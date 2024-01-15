@@ -75,8 +75,10 @@ class HeatMapPage extends StatelessWidget {
 
   final bool? showText;
   final bool isVertical;
+  final String? dday;
 
   HeatMapPage({
+    required this.dday,
     super.key,
     required this.colorMode,
     required this.startDate,
@@ -130,7 +132,7 @@ class HeatMapPage extends StatelessWidget {
         maxValue: maxValue,
         onClick: onClick,
         datasets: datasets,
-        showText: showText,
+        showText: showText, dday: dday,
       ));
 
       // also add first day's month information to _firstDayInfos list.
