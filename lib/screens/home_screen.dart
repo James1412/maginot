@@ -11,7 +11,12 @@ import 'package:provider/provider.dart';
 class HomeScreen extends StatefulWidget {
   final taskBox;
   final taskdb;
-  const HomeScreen({super.key, required this.taskBox, required this.taskdb});
+  final Function onAdd;
+  const HomeScreen(
+      {super.key,
+      required this.taskBox,
+      required this.taskdb,
+      required this.onAdd});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -43,20 +48,6 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => const SettingsScreen(),
     ));
-  }
-
-  Future<void> onAddDeadlinePressed() async {
-    List? textAndDates = await showDialog(
-      context: context,
-      builder: (context) => MaginotDialog(
-        controller: _controller,
-      ),
-    );
-    if (textAndDates != null) {
-      widget.taskdb.deadlines.add([textAndDates[1], 2, textAndDates[0], false]);
-      setState(() {});
-    }
-    widget.taskdb.updateDataBase();
   }
 
   @override
@@ -125,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Color(context.watch<ColorsConfigViewModel>().pastdayColor)
                     .withOpacity(0.7),
             foregroundColor: Colors.white,
-            onPressed: onAddDeadlinePressed,
+            onPressed: () => widget.onAdd(_controller),
             child: const Icon(
               Icons.add,
             ),

@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:hive/hive.dart';
 import 'package:maginot/box_names.dart';
 import 'package:maginot/components/maginot_dialog.dart';
-import 'package:maginot/components/yearly_calendar_heat_map.dart';
 import 'package:maginot/screens/settings.dart';
 import 'package:maginot/view_models/color_config_vm.dart';
-import 'package:maginot/view_models/is_vertical_vm.dart';
 import 'package:provider/provider.dart';
 
 class TaskListScreen extends StatefulWidget {
   final taskBox;
   final taskdb;
+  final Function onAdd;
   const TaskListScreen(
-      {super.key, required this.taskBox, required this.taskdb});
+      {super.key,
+      required this.taskBox,
+      required this.taskdb,
+      required this.onAdd});
 
   @override
   State<TaskListScreen> createState() => _TaskListScreenState();
@@ -39,20 +40,6 @@ class _TaskListScreenState extends State<TaskListScreen> {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => const SettingsScreen(),
     ));
-  }
-
-  Future<void> onAddDeadlinePressed() async {
-    List? textAndDates = await showDialog(
-      context: context,
-      builder: (context) => MaginotDialog(
-        controller: _controller,
-      ),
-    );
-    if (textAndDates != null) {
-      widget.taskdb.deadlines.add([textAndDates[1], 2, textAndDates[0], false]);
-      setState(() {});
-    }
-    widget.taskdb.updateDataBase();
   }
 
   @override
@@ -154,7 +141,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                 Color(context.watch<ColorsConfigViewModel>().pastdayColor)
                     .withOpacity(0.7),
             foregroundColor: Colors.white,
-            onPressed: onAddDeadlinePressed,
+            onPressed: () => widget.onAdd(_controller),
             child: const Icon(
               Icons.add,
             ),
