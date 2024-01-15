@@ -84,45 +84,52 @@ class _TaskListScreenState extends State<TaskListScreen> {
             ),
           ],
         ),
-        body: ListView.builder(
-          shrinkWrap: true,
-          itemCount: widget.taskdb.deadlines.length,
-          itemBuilder: (context, index) => InkWell(
-            splashFactory: InkRipple.splashFactory,
-            onTap: () => onListTileTap(index),
-            child: Slidable(
-              key: const ValueKey(0),
-              endActionPane: ActionPane(
-                motion: const DrawerMotion(),
-                dismissible: DismissiblePane(
-                    key: UniqueKey(),
-                    onDismissed: () => widget.onDeleteTask(index, context)),
-                children: [
-                  SlidableAction(
-                    borderRadius: BorderRadius.circular(5),
-                    backgroundColor: Colors.red,
-                    onPressed: (value) => widget.onDeleteTask(index, context),
-                    icon: Icons.delete,
+        body: widget.taskdb.deadlines.length == 0
+            ? const Center(
+                child: Text("Add a new task!"),
+              )
+            : ListView.builder(
+                shrinkWrap: true,
+                itemCount: widget.taskdb.deadlines.length,
+                itemBuilder: (context, index) => InkWell(
+                  splashFactory: InkRipple.splashFactory,
+                  onTap: () => onListTileTap(index),
+                  child: Slidable(
+                    key: const ValueKey(0),
+                    endActionPane: ActionPane(
+                      motion: const DrawerMotion(),
+                      dismissible: DismissiblePane(
+                          key: UniqueKey(),
+                          onDismissed: () =>
+                              widget.onDeleteTask(index, context)),
+                      children: [
+                        SlidableAction(
+                          borderRadius: BorderRadius.circular(5),
+                          backgroundColor: Colors.red,
+                          onPressed: (value) =>
+                              widget.onDeleteTask(index, context),
+                          icon: Icons.delete,
+                        ),
+                      ],
+                    ),
+                    child: ListTile(
+                      shape: Border(
+                          bottom: BorderSide(
+                              color: Colors.grey.shade400, width: 0.4)),
+                      title: Text(widget.taskdb.deadlines[index][2]),
+                      subtitle: Text(widget.taskdb.deadlines[index][0]
+                          .toString()
+                          .split(" ")[0]),
+                      leading: Checkbox(
+                        activeColor: Theme.of(context).primaryColor,
+                        onChanged: (value) => onListTileTap(index),
+                        value: widget.taskdb.deadlines[index][3],
+                      ),
+                      trailing: const Icon(Icons.chevron_left),
+                    ),
                   ),
-                ],
-              ),
-              child: ListTile(
-                shape: Border(
-                    bottom:
-                        BorderSide(color: Colors.grey.shade400, width: 0.4)),
-                title: Text(widget.taskdb.deadlines[index][2]),
-                subtitle: Text(
-                    widget.taskdb.deadlines[index][0].toString().split(" ")[0]),
-                leading: Checkbox(
-                  activeColor: Theme.of(context).primaryColor,
-                  onChanged: (value) => onListTileTap(index),
-                  value: widget.taskdb.deadlines[index][3],
                 ),
-                trailing: const Icon(Icons.chevron_left),
               ),
-            ),
-          ),
-        ),
         floatingActionButton: AnimatedOpacity(
           duration: const Duration(microseconds: 100),
           opacity: MediaQuery.of(context).viewInsets.bottom == 0.0 ? 1 : 0,

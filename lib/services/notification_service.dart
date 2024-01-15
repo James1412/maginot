@@ -58,6 +58,6 @@ class NotificationService {
   }
 
   Future<void> cancelScheduledNotification(int id) async {
-    return notificationsPlugin.cancel(id);
+    await notificationsPlugin.cancel(id);
   }
 }

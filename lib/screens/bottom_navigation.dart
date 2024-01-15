@@ -21,6 +21,8 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
   final _taskBox = Hive.box(taskBoxName);
   final taskdb = TaskDatabase();
   final idBox = Hive.box(idBoxName);
+  final todayDate =
+      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
   Future<void> onAddDeadlinePressed(
       TextEditingController controller, BuildContext context) async {
@@ -34,35 +36,44 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
       if (!mounted) return;
       context.read<NotificationIDCounter>().incrementId();
       // Add to the database and sort it by Dates
-      taskdb.deadlines.add([
-        textAndDates[1],
-        2,
-        textAndDates[0],
-        false,
-        idBox.get('id'),
-      ]);
+      taskdb.deadlines
+          .add([textAndDates[1], 2, textAndDates[0], false, idBox.get('id')]);
+
       taskdb.deadlines.sort((a, b) => a[0].compareTo(b[0]));
       taskdb.updateDataBase();
-      // If selectedDate is not today, send notifications
-      if (textAndDates[1] !=
-          DateTime(
-              DateTime.now().year, DateTime.now().month, DateTime.now().day)) {
+
+      DateTime deadlineDate = textAndDates[1];
+      // Add 8 hours so notifications can go off at 8 am
+      DateTime weekBeforeDate = textAndDates[1]
+          .subtract(const Duration(days: 7))
+          .add(const Duration(hours: 8));
+      DateTime dayBeforeDate = textAndDates[1]
+          .subtract(const Duration(days: 1))
+          .add(const Duration(hours: 8));
+
+      if (deadlineDate.isBefore(weekBeforeDate)) {
         NotificationService().scheduleNotification(
             id: idBox.get('id'),
-            title: "${textAndDates[0]} is coming soon",
+            title: "${textAndDates[0]} is due in a week!",
             body: "Check the deadline",
-            scheduledNotificationDateTime:
-                DateTime.now().add(const Duration(seconds: 5)));
-        print("Added ${idBox.get('id')}");
+            scheduledNotificationDateTime: weekBeforeDate);
+      }
+      if (deadlineDate.isBefore(dayBeforeDate)) {
+        NotificationService().scheduleNotification(
+            id: idBox.get('id') * -1,
+            title: "${textAndDates[0]} is due tomorrow!!",
+            body: "Check the deadline",
+            scheduledNotificationDateTime: dayBeforeDate);
       }
       setState(() {});
     }
   }
 
   Future<void> onDeleteTask(int index, BuildContext context) async {
-    print("Removed ${taskdb.deadlines[index][4]}");
     await NotificationService()
         .cancelScheduledNotification(taskdb.deadlines[index][4]);
+    await NotificationService()
+        .cancelScheduledNotification(taskdb.deadlines[index][4] * -1);
     setState(() {
       taskdb.deadlines.removeAt(index);
     });

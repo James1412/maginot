@@ -153,17 +153,9 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
                 fontSize: 17,
               ),
             ),
-            if (deadlinesOnDate.isNotEmpty)
-              const Text(
-                "Tasks",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 15,
-                ),
-              ),
             for (String item in deadlinesOnDate)
               Text(
-                item,
+                "•$item",
                 style: const TextStyle(
                   color: Colors.black,
                 ),
