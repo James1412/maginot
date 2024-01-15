@@ -17,3 +17,19 @@ class IsVerticalViewModel extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+class ShowDDayViewModel extends ChangeNotifier {
+  final ShowDDayRepository _repository;
+
+  late final _model = ShowDDayModel(isShowDday: _repository.isShowDDay());
+
+  ShowDDayViewModel(this._repository);
+
+  bool get isShowDDay => _model.isShowDday;
+
+  void setIsDDay(bool value) {
+    _repository.setShowDDay(value);
+    _model.isShowDday = value;
+    notifyListeners();
+  }
+}

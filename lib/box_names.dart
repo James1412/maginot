@@ -4,5 +4,6 @@ String incomplete = 'incomplete';
 String pastday = 'pastday';
 String colorListName = "color_list";
 String isverticalBoxName = "is_vertical";
+String showDDayBoxName = "show_dday";
 String taskBoxName = "task_box";
 String idBoxName = "id_box";

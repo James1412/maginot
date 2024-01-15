@@ -63,6 +63,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       context.read<IsVerticalViewModel>().setVertical(value),
                   title: const Text("Vertical view"),
                 ),
+                SwitchListTile(
+                  activeColor: Theme.of(context).primaryColor,
+                  inactiveTrackColor: Colors.grey.shade300,
+                  inactiveThumbColor: Colors.grey.shade600,
+                  trackOutlineColor:
+                      const MaterialStatePropertyAll(Colors.grey),
+                  value: context.watch<ShowDDayViewModel>().isShowDDay,
+                  onChanged: (value) =>
+                      context.read<ShowDDayViewModel>().setIsDDay(value),
+                  title: const Text("Show D-Day"),
+                ),
                 ListTile(
                   onTap: () => onColorChangeTap(incomplete),
                   title: const Text("Change due date color"),

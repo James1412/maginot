@@ -19,11 +19,13 @@ void main() async {
   await Hive.openBox(isverticalBoxName);
   await Hive.openBox(taskBoxName);
   await Hive.openBox(idBoxName);
+  await Hive.openBox(showDDayBoxName);
 
   NotificationService().initNotification();
 
   final colorRepository = ColorConfigRepository();
   final verticalRepository = IsVerticalRepository();
+  final showDDayRepo = ShowDDayRepository();
   runApp(
     MultiProvider(
       providers: [
@@ -31,6 +33,8 @@ void main() async {
             create: (context) => ColorsConfigViewModel(colorRepository)),
         ChangeNotifierProvider(
             create: (context) => IsVerticalViewModel(verticalRepository)),
+        ChangeNotifierProvider(
+            create: (context) => ShowDDayViewModel(showDDayRepo)),
         ChangeNotifierProvider(create: (context) => NotificationIDCounter()),
       ],
       child: const MaginotApp(),

@@ -126,17 +126,19 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
           );
         },
         // show the closest dday that is not finished, or else, show none
-        dday: resultMap.isEmpty
-            ? null
-            : resultMap[sortedDates.lastWhere(
-                (element) => resultMap[element] == true,
-                orElse: () => sortedDates[0],
-              )]!
-                ? "d-${sortedDates.lastWhere(
-                      (element) => resultMap[element] == true,
-                      orElse: () => sortedDates[0],
-                    ).difference(DateTime.now()).inDays + 1}"
-                : null,
+        dday: context.watch<ShowDDayViewModel>().isShowDDay
+            ? resultMap.isEmpty
+                ? null
+                : resultMap[sortedDates.lastWhere(
+                    (element) => resultMap[element] == true,
+                    orElse: () => sortedDates[0],
+                  )]!
+                    ? "d-${sortedDates.lastWhere(
+                          (element) => resultMap[element] == true,
+                          orElse: () => sortedDates[0],
+                        ).difference(DateTime.now()).inDays + 1}"
+                    : null
+            : null,
       ),
     );
   }
