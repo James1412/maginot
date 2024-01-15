@@ -4,7 +4,6 @@ import 'package:maginot/box_names.dart';
 import 'package:maginot/screens/bottom_navigation.dart';
 import 'package:maginot/repos/color_config_repo.dart';
 import 'package:maginot/repos/is_vertical_repo.dart';
-import 'package:maginot/screens/home_screen.dart';
 import 'package:maginot/utils.dart';
 import 'package:maginot/view_models/color_config_vm.dart';
 import 'package:maginot/view_models/is_vertical_vm.dart';

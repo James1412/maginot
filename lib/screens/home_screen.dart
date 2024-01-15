@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:hive/hive.dart';
 import 'package:maginot/box_names.dart';
 import 'package:maginot/components/maginot_dialog.dart';
 import 'package:maginot/components/yearly_calendar_heat_map.dart';
@@ -21,7 +19,14 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _controller = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController(
+      initialScrollOffset: (DateTime.utc(DateTime.now().year,
+                      DateTime.now().month, DateTime.now().day)
+                  .difference(DateTime(2024, 1, 1))
+                  .inDays /
+              7) /
+          52 *
+          2641);
 
   @override
   void initState() {
