@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:maginot/box_names.dart';
+import 'package:maginot/screens/bottom_navigation.dart';
 import 'package:maginot/repos/color_config_repo.dart';
 import 'package:maginot/repos/is_vertical_repo.dart';
 import 'package:maginot/screens/home_screen.dart';
@@ -55,7 +56,7 @@ class MaginotApp extends StatelessWidget {
           shadowColor: Colors.white,
         ),
       ),
-      home: const HomeScreen(),
+      home: const BottomNavigationScreen(),
     );
   }
 }

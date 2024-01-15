@@ -10,16 +10,17 @@ import 'package:maginot/view_models/color_config_vm.dart';
 import 'package:maginot/view_models/is_vertical_vm.dart';
 import 'package:provider/provider.dart';
 
-class HomeScreen extends StatefulWidget {
+class TaskListScreen extends StatefulWidget {
   final taskBox;
   final taskdb;
-  const HomeScreen({super.key, required this.taskBox, required this.taskdb});
+  const TaskListScreen(
+      {super.key, required this.taskBox, required this.taskdb});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<TaskListScreen> createState() => _TaskListScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _TaskListScreenState extends State<TaskListScreen> {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
@@ -34,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
     widget.taskdb.updateDataBase();
   }
 
-  Future<void> onSettingsTap(BuildContext context) async {
+  void onSettingsTap() {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => const SettingsScreen(),
     ));
@@ -89,31 +90,64 @@ class _HomeScreenState extends State<HomeScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: GestureDetector(
-                onTap: () => onSettingsTap(context),
+                onTap: onSettingsTap,
                 child: const FaIcon(FontAwesomeIcons.gear),
               ),
             ),
           ],
         ),
-        body: context.watch<IsVerticalViewModel>().isVertical
-            ? Scrollbar(
-                thickness: 5,
-                controller: _scrollController,
-                child: SingleChildScrollView(
-                  controller: _scrollController,
-                  child: HeatMapWidget(
-                    deadlines: widget.taskdb.deadlines,
+        body: ListView.builder(
+          shrinkWrap: true,
+          itemCount: widget.taskdb.deadlines.length,
+          itemBuilder: (context, index) => InkWell(
+            splashFactory: InkRipple.splashFactory,
+            onTap: () => onListTileTap(index),
+            child: Slidable(
+              key: const ValueKey(0),
+              endActionPane: ActionPane(
+                motion: const DrawerMotion(),
+                dismissible: DismissiblePane(onDismissed: () {
+                  setState(() {
+                    widget.taskdb.deadlines.removeAt(index);
+                  });
+                  widget.taskdb.updateDataBase();
+                }),
+                children: [
+                  SlidableAction(
+                    borderRadius: BorderRadius.circular(5),
+                    backgroundColor: Colors.red,
+                    onPressed: (context) {
+                      setState(() {
+                        widget.taskdb.deadlines.removeAt(index);
+                      });
+                      widget.taskdb.updateDataBase();
+                    },
+                    icon: Icons.delete,
                   ),
-                ),
-              )
-            : HeatMapWidget(
-                deadlines: widget.taskdb.deadlines,
+                ],
               ),
+              child: ListTile(
+                shape: Border(
+                    bottom:
+                        BorderSide(color: Colors.grey.shade400, width: 0.4)),
+                title: Text(widget.taskdb.deadlines[index][2]),
+                subtitle: Text(
+                    widget.taskdb.deadlines[index][0].toString().split(" ")[0]),
+                leading: Checkbox(
+                  activeColor: Theme.of(context).primaryColor,
+                  onChanged: (value) => onListTileTap(index),
+                  value: widget.taskdb.deadlines[index][3],
+                ),
+                trailing: const Icon(Icons.chevron_left),
+              ),
+            ),
+          ),
+        ),
         floatingActionButton: AnimatedOpacity(
           duration: const Duration(microseconds: 100),
           opacity: MediaQuery.of(context).viewInsets.bottom == 0.0 ? 1 : 0,
           child: FloatingActionButton(
-            heroTag: "home",
+            heroTag: "List",
             splashColor:
                 Color(context.watch<ColorsConfigViewModel>().pastdayColor),
             backgroundColor:

@@ -153,7 +153,7 @@ class _HeatMap extends State<HeatMap> {
                 trackVisibility: true,
                 thickness: 5.0,
                 child: SizedBox(
-                  height: widget.size! * 9.5,
+                  height: MediaQuery.of(context).size.height * 0.55,
                   child: SingleChildScrollView(
                     controller: widget.controller,
                     scrollDirection: Axis.horizontal,

@@ -104,7 +104,9 @@ class _HeatMapWidgetState extends State<HeatMapWidget> {
           2: Color(context.watch<ColorsConfigViewModel>().incompleteColor),
           3: Color(context.watch<ColorsConfigViewModel>().completeColor),
         },
-        size: MediaQuery.of(context).size.width * 0.112,
+        size: context.watch<IsVerticalViewModel>().isVertical
+            ? MediaQuery.of(context).size.width * 0.112
+            : MediaQuery.of(context).size.height * 0.06,
         showColorTip: false,
         onClick: (value) {
           deadlinesOnDate.clear();
