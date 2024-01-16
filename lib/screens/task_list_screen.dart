@@ -5,6 +5,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:maginot/ad_helper.dart';
 import 'package:maginot/box_names.dart';
 import 'package:maginot/screens/settings.dart';
+import 'package:maginot/services/notification_service.dart';
 import 'package:maginot/view_models/color_config_vm.dart';
 import 'package:provider/provider.dart';
 
@@ -13,12 +14,14 @@ class TaskListScreen extends StatefulWidget {
   final taskdb;
   final Function onAdd;
   final Function onDeleteTask;
+  final Function(List, int) onAddNotification;
   const TaskListScreen(
       {super.key,
       required this.taskBox,
       required this.taskdb,
       required this.onAdd,
-      required this.onDeleteTask});
+      required this.onDeleteTask,
+      required this.onAddNotification});
 
   @override
   State<TaskListScreen> createState() => _TaskListScreenState();
@@ -71,15 +74,28 @@ class _TaskListScreenState extends State<TaskListScreen> {
     super.dispose();
   }
 
-  void onListTileTap(int index) {
-    setState(() {
-      widget.taskdb.deadlines[index][3] = !widget.taskdb.deadlines[index][3];
-      if (widget.taskdb.deadlines[index][3]) {
-        widget.taskdb.deadlines[index][1] = 3;
-      } else {
-        widget.taskdb.deadlines[index][1] = 2;
-      }
-    });
+  Future<void> onListTileTap(int index) async {
+    widget.taskdb.deadlines[index][3] = !widget.taskdb.deadlines[index][3];
+    // If finished
+    if (widget.taskdb.deadlines[index][3]) {
+      widget.taskdb.deadlines[index][1] = 3;
+      await NotificationService()
+          .cancelScheduledNotification(widget.taskdb.deadlines[index][4]);
+      await NotificationService()
+          .cancelScheduledNotification(widget.taskdb.deadlines[index][4] * -1);
+    }
+    // If changed to not finished
+    else {
+      widget.taskdb.deadlines[index][1] = 2;
+      await widget.onAddNotification(
+        [
+          widget.taskdb.deadlines[index][2],
+          widget.taskdb.deadlines[index][0],
+        ],
+        widget.taskdb.deadlines[index][4],
+      );
+    }
+    setState(() {});
     widget.taskdb.updateDataBase();
   }
 

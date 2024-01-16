@@ -34,38 +34,57 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
     );
     if (textAndDates != null) {
       if (!mounted) return;
-      context.read<NotificationIDCounter>().incrementId();
+      context.read<NotificationIDCounter>().incrementIdByTwo();
       // Add to the database and sort it by Dates
       taskdb.deadlines
           .add([textAndDates[1], 2, textAndDates[0], false, idBox.get('id')]);
-
       taskdb.deadlines.sort((a, b) => a[0].compareTo(b[0]));
       taskdb.updateDataBase();
 
-      DateTime deadlineDate = textAndDates[1];
-      // Add 8 hours so notifications can go off at 8 am
-      DateTime weekBeforeDate = textAndDates[1]
-          .subtract(const Duration(days: 7))
-          .add(const Duration(hours: 8));
-      DateTime dayBeforeDate = textAndDates[1]
-          .subtract(const Duration(days: 1))
-          .add(const Duration(hours: 8));
+      await addNotification(textAndDates, idBox.get('id'));
 
-      if (deadlineDate.isBefore(weekBeforeDate)) {
-        NotificationService().scheduleNotification(
-            id: idBox.get('id'),
-            title: "${textAndDates[0]} is due in a week!",
-            body: "Check the deadline",
-            scheduledNotificationDateTime: weekBeforeDate);
-      }
-      if (deadlineDate.isBefore(dayBeforeDate)) {
-        NotificationService().scheduleNotification(
-            id: idBox.get('id') * -1,
-            title: "${textAndDates[0]} is due tomorrow!!",
-            body: "Check the deadline",
-            scheduledNotificationDateTime: dayBeforeDate);
-      }
       setState(() {});
+    }
+  }
+
+  Future<void> addNotification(textAndDates, id) async {
+    DateTime deadlineDate = textAndDates[1];
+    // Add 8 hours so notifications can go off at 8 am
+    DateTime weekBeforeDate = deadlineDate
+        .subtract(const Duration(days: 7))
+        .add(const Duration(hours: 8));
+    DateTime threeDaysBeforeDate =
+        deadlineDate.subtract(Duration(days: 3)).add(Duration(hours: 8));
+    DateTime dayBeforeDate = deadlineDate
+        .subtract(const Duration(days: 1))
+        .add(const Duration(hours: 8));
+
+    if (DateTime.now().isBefore(weekBeforeDate)) {
+      print(weekBeforeDate);
+      print(id);
+      await NotificationService().scheduleNotification(
+          id: id,
+          title: "${textAndDates[0]} is due in a week!",
+          body: "Check the deadline",
+          scheduledNotificationDateTime: weekBeforeDate);
+    }
+    if (DateTime.now().isBefore(threeDaysBeforeDate)) {
+      print(threeDaysBeforeDate);
+      print(id + 1);
+      await NotificationService().scheduleNotification(
+          id: id + 1,
+          title: "${textAndDates[0]} is due in three days!",
+          body: "Check the deadline",
+          scheduledNotificationDateTime: threeDaysBeforeDate);
+    }
+    if (DateTime.now().isBefore(dayBeforeDate)) {
+      print(dayBeforeDate);
+      print(id * -1);
+      await NotificationService().scheduleNotification(
+          id: id * -1,
+          title: "${textAndDates[0]} is due tomorrow!!",
+          body: "Check the deadline",
+          scheduledNotificationDateTime: dayBeforeDate);
     }
   }
 
@@ -96,6 +115,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
           Offstage(
             offstage: selectedIndex != 1,
             child: TaskListScreen(
+              onAddNotification: addNotification,
               onDeleteTask: onDeleteTask,
               onAdd: onAddDeadlinePressed,
               taskBox: _taskBox,

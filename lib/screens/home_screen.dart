@@ -56,18 +56,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  void onListTileTap(int index) {
-    setState(() {
-      widget.taskdb.deadlines[index][3] = !widget.taskdb.deadlines[index][3];
-      if (widget.taskdb.deadlines[index][3]) {
-        widget.taskdb.deadlines[index][1] = 3;
-      } else {
-        widget.taskdb.deadlines[index][1] = 2;
-      }
-    });
-    widget.taskdb.updateDataBase();
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

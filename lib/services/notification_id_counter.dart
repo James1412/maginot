@@ -7,12 +7,12 @@ class NotificationIDCounter extends ChangeNotifier {
 
   final idBox = Hive.box(idBoxName);
 
-  void incrementId() {
-    id++;
+  void incrementIdByTwo() {
+    id += 2;
     if (idBox.get('id') == null) {
       idBox.put('id', 0);
     }
-    idBox.put('id', idBox.get('id') + 1);
+    idBox.put('id', idBox.get('id') + 3);
     notifyListeners();
   }
 }
